@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { OnboardingForm } from './components/Form';
+import { Form } from './components/Form';
 import { ChakraProvider } from '@chakra-ui/react';
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
     <ChakraProvider>
       <div className="App">
         <header className="App-header">
-          <OnboardingForm />
+          <Form />
         </header>
       </div>
     </ChakraProvider>

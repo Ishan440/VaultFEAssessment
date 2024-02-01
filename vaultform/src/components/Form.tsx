@@ -11,7 +11,7 @@ type FormData = {
 
 const phoneRegex = /^\+1[0-9]{10}$/;
 
-export const OnboardingForm: React.FC = () => {
+export const Form: React.FC = () => {
   const {
     register,
     handleSubmit,
