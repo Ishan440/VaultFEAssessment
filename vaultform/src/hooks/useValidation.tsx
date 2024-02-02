@@ -10,7 +10,7 @@ const useCorporationNumberValidation = (corporationNumber: string): ValidationRe
 
   useEffect(() => {
     const validateCorporationNumber = async () => {
-      if (corporationNumber.length === 9) {
+      if (corporationNumber && corporationNumber.length === 9) {
         try {
           const response = await fetch(`https://vault-test-task-api.onrender.com/corporation-number/${corporationNumber}`);
           const data = await response.json();

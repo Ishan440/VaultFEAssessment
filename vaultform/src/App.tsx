@@ -6,12 +6,11 @@ const theme = extendTheme({
   styles: {
     global: {
       body: {
-        bg: 'gray.100', // Set the global background color
-        fontFamily: 'Inter, sans-serif', // Set the default font family
+        bg: 'gray.100',
+        fontFamily: 'Inter, sans-serif',
       },
     },
   },
-  // You can extend the theme further to include custom colors, fonts, etc.
 });
 
 function App() {

@@ -1,42 +1,66 @@
-import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { act } from 'react-dom/test-utils';
 import { Form } from '../components/Form';
 
-describe('Form', () => {
-  beforeEach(() => {
-    render(<Form />);
+jest.mock('@chakra-ui/react', () => {
+  const actualChakra = jest.requireActual('@chakra-ui/react');
+  return {
+    ...actualChakra,
+    useToast: jest.fn(() => jest.fn().mockImplementation(({ title, description, status }) => {
+      console.log(`Toast called with title: ${title}, status: ${status}, description: ${description}`);
+    })),
+  };
+});
+
+beforeAll(() => {
+  jest.spyOn(global, 'fetch').mockImplementation(() =>
+    Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({}),
+    }) as Promise<Response>
+  );
+});
+
+afterEach(() => {
+  jest.resetAllMocks();
+});
+
+describe('Form Component Tests', () => {
+  beforeEach(async () => {
+    await waitFor(() => render(<Form />));
   });
 
-  const testInputField = async (
-    fieldLabel: string,
-    validInput: string,
-    invalidMessage: string
-  ) => {
-    await act(async () => {
-      const input = screen.getByLabelText(fieldLabel) as HTMLInputElement;
-      userEvent.type(input, validInput);
-      fireEvent.blur(input);
-    });
-
-    await waitFor(() => {
-      expect(screen.queryByText(invalidMessage)).not.toBeInTheDocument();
-    });
-  };
-
   test('validates first name input correctly', async () => {
-    await testInputField('First Name', 'Harry', 'First Name is required');
+    const input = screen.getByLabelText(/first name/i);
+    await userEvent.type(input, 'Harry');
+    fireEvent.blur(input);
+    await waitFor(() => expect(screen.queryByText(/First Name is required/)).not.toBeInTheDocument());
   });
 
   test('validates last name input correctly', async () => {
-    await testInputField('Last Name', 'Potter', 'Last Name is required');
+    const input = screen.getByLabelText(/last name/i);
+    await userEvent.type(input, 'Potter');
+    fireEvent.blur(input);
+    await waitFor(() => expect(screen.queryByText(/Last Name is required/)).not.toBeInTheDocument());
   });
 
   test('validates phone number format correctly', async () => {
-    await testInputField('Phone Number', '+12345678901', 'Invalid Canadian phone number. Format: +1XXXXXXXXXX');
+    const input = screen.getByLabelText(/phone number/i);
+    await userEvent.type(input, '+12345678901');
+    fireEvent.blur(input);
+    await waitFor(() => expect(screen.queryByText(/Invalid phone number. Format: \+1XXXXXXXXXX/)).not.toBeInTheDocument());
   });
 
-  test('validates corporation number correctly', async () => {
-    await testInputField('Corporation Number', '123456789', 'Corporation number must be 9 characters');
+  test('validates corporation number correctly and simulates successful validation', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ valid: true }),
+    });
+    const input = screen.getByLabelText(/corporation number/i);
+    await userEvent.type(input, '123456789');
+    fireEvent.blur(input);
+    await waitFor(() => expect(screen.queryByText(/Invalid corporation number/)).not.toBeInTheDocument());
+    expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('123456789'));
   });
+  
 });
