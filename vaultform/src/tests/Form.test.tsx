@@ -67,8 +67,8 @@ describe('Form Component Tests', () => {
       ok: true,
       json: () => Promise.resolve({}),
     });
-    await userEvent.type(screen.getByLabelText(/first name/i), 'John');
-    await userEvent.type(screen.getByLabelText(/last name/i), 'Doe');
+    await userEvent.type(screen.getByLabelText(/first name/i), 'Harry');
+    await userEvent.type(screen.getByLabelText(/last name/i), 'Potter');
     await userEvent.type(screen.getByLabelText(/phone number/i), '+11234567890');
     await userEvent.type(screen.getByLabelText(/corporation number/i), '123456789');
     await act(async () => {
