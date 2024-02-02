@@ -13,7 +13,7 @@ type FormData = {
   corporationNumber: string;
 };
 
-const phoneRegex = /^\+1[0-9]{10}$/;
+const phoneRegex = /^\+1[0-9]{10}$a/;
 
 export const Form: React.FC = () => {
   const { register, handleSubmit, watch, formState: { errors, touchedFields }, setError, clearErrors } = useForm<FormData>();

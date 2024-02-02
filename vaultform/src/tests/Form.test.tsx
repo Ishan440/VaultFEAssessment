@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, act, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form } from '../components/Form';
 
@@ -62,5 +62,18 @@ describe('Form Component Tests', () => {
     await waitFor(() => expect(screen.queryByText(/Invalid corporation number/)).not.toBeInTheDocument());
     expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('123456789'));
   });
-  
+  test('submits form correctly', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({}),
+    });
+    await userEvent.type(screen.getByLabelText(/first name/i), 'John');
+    await userEvent.type(screen.getByLabelText(/last name/i), 'Doe');
+    await userEvent.type(screen.getByLabelText(/phone number/i), '+11234567890');
+    await userEvent.type(screen.getByLabelText(/corporation number/i), '123456789');
+    await act(async () => {
+      await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+    });
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
 });
