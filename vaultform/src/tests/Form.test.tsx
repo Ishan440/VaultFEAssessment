@@ -74,6 +74,6 @@ describe('Form Component Tests', () => {
     await act(async () => {
       await userEvent.click(screen.getByRole('button', { name: /submit/i }));
     });
-    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
   });
 });
